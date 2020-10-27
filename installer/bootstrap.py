@@ -264,7 +264,10 @@ channels:
             os.mkdir("build")
         except Exception:
             pass
-        run_indirect_command(os.path.join(prefix, "Scripts", "pip.exe"), args=["install", "scipy", "scikit-learn"])
+        run_indirect_command(
+            os.path.join(prefix, "Scripts", "pip.exe"),
+            args=["install", "scipy", "scikit-learn"],
+        )
 
 
 def run_command(command, workdir):
@@ -963,7 +966,6 @@ def refresh_build():
 
 
 def install_precommit():
-    if os.name == "nt": return
     print("Installing precommits")
     run_indirect_command(
         os.path.join("bin", "libtbx.precommit"),
@@ -981,7 +983,9 @@ def configure_build(config_flags):
     else:
         conda_python = os.path.join("..", "conda_base", "bin", "python")
 
-    if os.name != "nt" and not any(flag.startswith("--compiler=") for flag in config_flags):
+    if os.name != "nt" and not any(
+        flag.startswith("--compiler=") for flag in config_flags
+    ):
         config_flags.append("--compiler=conda")
     if "--enable_cxx11" not in config_flags:
         config_flags.append("--enable_cxx11")
@@ -989,7 +993,7 @@ def configure_build(config_flags):
         config_flags.append("--use_conda")
 
     # write a new-style environment setup script
-    with open(("dials.bat" if os.name == "nt" else "dials") , "w"):
+    with open(("dials.bat" if os.name == "nt" else "dials"), "w"):
         pass  # ensure we write a new-style environment setup script
 
     configcmd = [
