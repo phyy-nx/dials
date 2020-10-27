@@ -260,8 +260,11 @@ channels:
         # There are no scipy Windows packages in conda-forge,
         # so install that plus downstream dependencies using pip.
         # https://github.com/conda-forge/vs2008_runtime-feedstock
+        try:
+            os.mkdir("build")
+        except Exception:
+            pass
         run_indirect_command(os.path.join(prefix, "Scripts", "pip.exe"), args=["install", "scipy", "scikit-learn"])
-
 
 
 def run_command(command, workdir):
@@ -300,7 +303,8 @@ def run_indirect_command(command, args):
             fh.write("call %s\\conda_base\\condabin\\activate.bat\r\n" % os.getcwd())
             fh.write("shift\r\n")
             fh.write("%*\r\n")
-        command = command + ".bat"
+        if not command.endswith((".bat", ".cmd", ".exe")):
+            command = command + ".bat"
         indirection = ["cmd.exe", "/C", "indirection.cmd"]
     else:
         filename = os.path.join("build", "indirection.sh")
@@ -959,6 +963,7 @@ def refresh_build():
 
 
 def install_precommit():
+    if os.name == "nt": return
     print("Installing precommits")
     run_indirect_command(
         os.path.join("bin", "libtbx.precommit"),
