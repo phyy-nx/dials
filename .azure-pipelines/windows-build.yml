@@ -168,7 +168,7 @@ steps:
 
     call dials.bat
     cd modules/dials
-    pytest -v -ra -n auto --basetemp="$(Pipeline.Workspace)\tests" --durations=10 --timeout=5400 test/command_line/test_merge_reflection_lists.py algorithms/indexing/test_compare_orientation_matrices.py || echo "##vso[task.complete result=Failed;]Some tests failed"
+    pytest -v -ra -n auto --basetemp="$(Pipeline.Workspace)\tests" --durations=10 --timeout=5400 || echo "##vso[task.complete result=Failed;]Some tests failed"
   displayName: Run some tests (temporary)
   workingDirectory: $(Pipeline.Workspace)
 
@@ -209,8 +209,8 @@ steps:
     dir
   displayName: Recover disk space
   workingDirectory: $(Pipeline.Workspace)
-  condition: or(ne(variables.BASE_CACHED, 'true'),
-                ne(variables.BUILD_CACHED, 'true'))
+# condition: or(ne(variables.BASE_CACHED, 'true'),
+#               ne(variables.BUILD_CACHED, 'true'))
 # condition: or(ne(variables.BASE_CACHED, 'true'),
 #               ne(variables.BUILD_CACHED, 'true'),
 #               ne(variables.DATA_CACHED, 'true'),
