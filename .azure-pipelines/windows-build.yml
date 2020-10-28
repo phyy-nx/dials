@@ -125,7 +125,8 @@ steps:
     copy build\activate.bat dials.bat
     call dials.bat
     cd build
-    make reconf
+    libtbx.refresh
+    make
   displayName: DIALS build (incremental)
   workingDirectory: $(Pipeline.Workspace)
   condition: ne(variables.BUILD_CACHED, 'false')
