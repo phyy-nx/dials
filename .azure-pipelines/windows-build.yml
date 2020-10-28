@@ -46,13 +46,13 @@ steps:
 # Update the cctbx_project and dxtbx repositories now,
 # unless they were just freshly cloned
 - script: |
-    echo ""
-    echo "Checking out latest cctbx_project commit"
+    echo
+    echo Checking out latest cctbx_project commit
     cd $(Pipeline.Workspace)/modules/cctbx_project
-    git fetch origin master --depth=1
+    git fetch upstream master --depth=1
     git checkout FETCH_HEAD
-    echo ""
-    echo "Checking out latest dxtbx commit"
+    echo
+    echo Checking out latest dxtbx commit
     cd $(Pipeline.Workspace)/modules/dxtbx
     git fetch origin master --depth=1
     git checkout FETCH_HEAD
