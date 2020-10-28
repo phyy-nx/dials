@@ -168,7 +168,7 @@ steps:
 
     call dials.bat
     cd modules/dials
-    pytest -v -ra  -n auto --basetemp="$(Pipeline.Workspace)\tests" --durations=10 --timeout=5400 test/command_line/test_merge_reflection_lists.py algorithms/indexing/test_compare_orientation_matrices.py || echo "##vso[task.complete result=Failed;]Some tests failed"
+    pytest -v -ra -n auto --basetemp="$(Pipeline.Workspace)\tests" --durations=10 --timeout=5400 test/command_line/test_merge_reflection_lists.py algorithms/indexing/test_compare_orientation_matrices.py || echo "##vso[task.complete result=Failed;]Some tests failed"
   displayName: Run some tests (temporary)
   workingDirectory: $(Pipeline.Workspace)
 
@@ -188,7 +188,17 @@ steps:
 - powershell: |
     echo "Disk space usage:"
     Get-ChildItem -Directory | ForEach-Object { "{1,10:N2} MB  {0:S}" -f $_, ((Get-ChildItem $_ -Recurse -ErrorAction SilentlyContinue | Measure-Object -Property Length -sum).sum / 1Mb) }
-    REM Remove-Item -Path tests -Recurse
+
+    echo ""
+    echo "Build directory:"
+    Get-ChildItem build -Directory -Recurse | ForEach-Object { "{1,10:N2} MB  {0:S}" -f $_, ((Get-ChildItem $_ -Recurse -ErrorAction SilentlyContinue | Measure-Object -Property Length -sum).sum / 1Mb) }
+
+    echo ""
+    echo "Test artefacts:"
+    Get-ChildItem tests -Directory -Recurse | ForEach-Object { "{1,10:N2} MB  {0:S}" -f $_, ((Get-ChildItem $_ -Recurse -ErrorAction SilentlyContinue | Measure-Object -Property Length -sum).sum / 1Mb) }
+    Remove-Item -Path tests -Recurse
+
+    dir
   displayName: Recover disk space
   workingDirectory: $(Pipeline.Workspace)
 # condition: ne(variables.BUILD_CACHED, 'true')
