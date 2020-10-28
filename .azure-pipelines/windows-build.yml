@@ -103,7 +103,8 @@ steps:
     call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\amd64\vcvars64.bat"
 
     python modules/dials/installer/bootstrap.py build
-    copy "dials.bat" "build\activate.bat"  # ensure a copy is kept in the cache
+    REM -- ensure a copy of the environment loader is kept in the cache
+    copy dials.bat build\activate.bat
   displayName: DIALS build (initial)
   workingDirectory: $(Pipeline.Workspace)
   condition: eq(variables.BUILD_CACHED, 'false')
@@ -120,7 +121,8 @@ steps:
     REM -- the above can be used once we start using the default compiler suite. Until then we need to:
     call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\amd64\vcvars64.bat"
 
-    copy "build\activate.bat" "dials.bat"  # restore copy from the cache
+    REM -- restore copy of the environment loader from the cache
+    copy build\activate.bat dials.bat
     call dials.bat
     cd build
     make reconf
