@@ -8,9 +8,9 @@ steps:
 
 # Downgrade the installed vs2017+ to 2015, as cbflib_adaptbx won't build otherwise
 # This takes up 5 minutes of uncacheable build time :(
-#- script: |
-#    choco install microsoft-visual-cpp-build-tools
-#  displayName: Install MSVC 2015 Build Tools
+- script: |
+    choco install microsoft-visual-cpp-build-tools
+  displayName: Install MSVC 2015 Build Tools
 
 # Obtain a shallow clone of the DIALS repository.
 # DIALS will not be able to report proper version numbers
@@ -174,7 +174,7 @@ steps:
 
     call dials.bat
     cd modules/dials
-    REM   pytest -v -ra -n auto --basetemp="$(Pipeline.Workspace)\tests" --durations=10 --timeout=5400 || echo "##vso[task.complete result=Failed;]Some tests failed"
+    pytest -v -ra -n auto --basetemp="$(Pipeline.Workspace)\tests" --durations=10 --timeout=5400 || echo "##vso[task.complete result=Failed;]Some tests failed"
   displayName: Run some tests (temporary)
   workingDirectory: $(Pipeline.Workspace)
 
