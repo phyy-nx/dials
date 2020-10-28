@@ -201,14 +201,16 @@ steps:
     Get-ChildItem -Directory | ForEach-Object { "{1,10:N2} MB  {0:S}" -f $_, ((Get-ChildItem $_ -Recurse -ErrorAction SilentlyContinue | Measure-Object -Property Length -sum).sum / 1Mb) }
     cd ..
 
-    Get-ChildItem -Path tests -Recurse -Force -ErrorAction Stop | Where-Object { if($_.Attributes -match "ReparsePoint"){$_.Delete()} }
-    Remove-Item -Path tests -Recurse -Force
+    echo ""
+    echo "Cleaning up test artefacts"
+    Get-ChildItem -Path tests -Recurse -Force -ErrorAction SilentlyContinue | Where-Object { if($_.Attributes -match "ReparsePoint"){$_.Delete()} }
+    Remove-Item -Path tests -Recurse -Force -ErrorAction SilentlyContinue
 
     dir
   displayName: Recover disk space
   workingDirectory: $(Pipeline.Workspace)
-# condition: or(ne(variables.BASE_CACHED, 'true'),
-#               ne(variables.BUILD_CACHED, 'true'))
+  condition: or(ne(variables.BASE_CACHED, 'true'),
+                ne(variables.BUILD_CACHED, 'true'))
 # condition: or(ne(variables.BASE_CACHED, 'true'),
 #               ne(variables.BUILD_CACHED, 'true'),
 #               ne(variables.DATA_CACHED, 'true'),
