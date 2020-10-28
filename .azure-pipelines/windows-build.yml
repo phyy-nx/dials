@@ -187,12 +187,12 @@ steps:
 # Recover disk space after testing
 # This is only relevant if we had cache misses, as free disk space is required to create cache archives
 - powershell: |
-    echo Disk space usage:
-    Get-ChildItem -Directory | ForEach-Object { "{1:N2} GB  {0:S}" -f $_, ((Get-ChildItem $_ -Recurse -ErrorAction SilentlyContinue | Measure-Object -Property Length -sum).sum / 1Gb) }
+    echo "Disk space usage:"
+    Get-ChildItem -Directory | ForEach-Object { "{1,10:N2} MB  {0:S}" -f $_, ((Get-ChildItem $_ -Recurse -ErrorAction SilentlyContinue | Measure-Object -Property Length -sum).sum / 1Mb) }
     REM Remove-Item -Path tests -Recurse
   displayName: Recover disk space
   workingDirectory: $(Pipeline.Workspace)
-  condition: ne(variables.BUILD_CACHED, 'true')
+# condition: ne(variables.BUILD_CACHED, 'true')
 # condition: or(ne(variables.BASE_CACHED, 'true'),
 #               ne(variables.BUILD_CACHED, 'true'),
 #               ne(variables.DATA_CACHED, 'true'),
