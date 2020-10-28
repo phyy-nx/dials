@@ -201,7 +201,7 @@ steps:
     Get-ChildItem -Directory | ForEach-Object { "{1,10:N2} MB  {0:S}" -f $_, ((Get-ChildItem $_ -Recurse -ErrorAction SilentlyContinue | Measure-Object -Property Length -sum).sum / 1Mb) }
     cd ..
 
-    Remove-Item -Path tests -Recurse
+    Remove-Item -Path tests -Recurse -Force
 
     dir
   displayName: Recover disk space
