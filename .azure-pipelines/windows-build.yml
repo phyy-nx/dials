@@ -46,13 +46,16 @@ steps:
 # Update the cctbx_project and dxtbx repositories now,
 # unless they were just freshly cloned
 - script: |
-    FOR %%REPOSITORY IN (cctbx_project dxtbx) DO (
-      echo ""
-      echo "Checking out latest %%REPOSITORY commit"
-      cd $(Pipeline.Workspace)/modules/%%REPOSITORY
-      git fetch origin master --depth=1
-      git checkout FETCH_HEAD
-    )
+    echo ""
+    echo "Checking out latest cctbx_project commit"
+    cd $(Pipeline.Workspace)/modules/cctbx_project
+    git fetch origin master --depth=1
+    git checkout FETCH_HEAD
+    echo ""
+    echo "Checking out latest dxtbx commit"
+    cd $(Pipeline.Workspace)/modules/dxtbx
+    git fetch origin master --depth=1
+    git checkout FETCH_HEAD
   displayName: Repository update (incremental)
   condition: ne(variables.REPOSITORIES_CACHED, 'false')
 
@@ -132,7 +135,7 @@ steps:
     make
   displayName: DIALS build (incremental)
   workingDirectory: $(Pipeline.Workspace)
-  condition: eq(variables.BUILD_CACHED, 'never')
+  condition: ne(variables.BUILD_CACHED, 'false')
 
 # Ensure we are using up-to-date testing packages.
 # Extract the dials-data version so we can correctly cache regression data.
