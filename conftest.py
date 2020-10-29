@@ -6,11 +6,13 @@
 
 from __future__ import absolute_import, division, print_function
 
+import functools
 import multiprocessing
 import os
 import sys
 import warnings
 
+import procrunner
 import pytest
 
 # https://stackoverflow.com/a/40846742
@@ -21,6 +23,14 @@ if sys.version_info[:2] == (3, 7) and sys.platform == "darwin":
     multiprocessing.set_start_method("forkserver")
 
 collect_ignore = []
+
+# Disable the Python Development Mode for subprocesses.
+# This is because we have too many warnings and we treat stderr output as test failures.
+# Neither is optimal. This should be removed once we have warnings under control.
+_wrapped_procrunner = functools.partial(
+    procrunner.run, environment_override={"PYTHONDEVMODE": ""}
+)
+procrunner.run = _wrapped_procrunner
 
 
 def pytest_addoption(parser):
