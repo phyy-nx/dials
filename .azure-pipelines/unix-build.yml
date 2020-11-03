@@ -124,6 +124,15 @@ steps:
   workingDirectory: $(Pipeline.Workspace)
   condition: eq(variables.BUILD_CACHED, 'false')
 
+- bash: |
+    cd build
+    ls -la
+    cd lib
+    ls -la
+    ls -1 | xargs file
+  displayName: debugging 1
+  workingDirectory: $(Pipeline.Workspace)
+
 # If the build directory was loaded (or kick-started) from cache then
 # do an incremental build
 - bash: |
@@ -135,6 +144,15 @@ steps:
   displayName: DIALS build (incremental)
   workingDirectory: $(Pipeline.Workspace)
   condition: ne(variables.BUILD_CACHED, 'false')
+
+- bash: |
+    cd build
+    ls -la
+    cd lib
+    ls -la
+    ls -1 | xargs file
+  displayName: debugging 2
+  workingDirectory: $(Pipeline.Workspace)
 
 # Ensure we are using up-to-date testing packages.
 # Extract the dials-data version so we can correctly cache regression data.
