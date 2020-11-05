@@ -3,18 +3,11 @@ jobs:
   pool:
     vmImage: macOS-latest
   dependsOn: setup
-  variables:
-    CURRENT_WEEK: $[ dependencies.setup.outputs['constants.CURRENT_WEEK'] ]
-    TODAY_ISO: $[ dependencies.setup.outputs['constants.TODAY_ISO'] ]
 
-  strategy:
-    matrix:
-      python36:
-        PYTHON_VERSION: 3.6
   timeoutInMinutes: 150
 
   steps:
 
-  - template: unix-build.yml
-    parameters:
-      conda_environment: .conda-envs/macos.txt
+  - template: cache-file.yml
+
+  - template: restore-file.yml

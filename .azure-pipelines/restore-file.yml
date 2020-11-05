@@ -1,0 +1,22 @@
+steps:
+
+- checkout: none
+
+- task: Cache@2
+  inputs:
+    key: '"debug-cache" | "$(CACHE_ID)"'
+    path: $(Pipeline.Workspace)/cache
+    cacheHitVar: CACHE_HIT
+  displayName: Restore cache
+
+- bash: |
+    cd cache
+    echo
+    echo Directory content:
+    ls -la
+    echo
+    echo Hash information:
+    shasum -a 256 scitbx_array_family_flex_ext.so
+  displayName: Verify file
+  workingDirectory: $(Pipeline.Workspace)
+  condition: ne(variables.CACHE_HIT, 'false')

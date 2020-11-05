@@ -1,51 +1,35 @@
-variables:
-  CACHE_VERSION: 20201105
-
-schedules:
-  # nightly builds to populate caches
-  - cron: "3 0 * * Mon"
-    displayName: Weekly midnight build
-    branches:
-      include:
-      - master
-    always: true
-  - cron: "3 0 * * Tue-Sat,Sun"
-    displayName: Daily midnight build
-    branches:
-      include:
-      - master
-
 jobs:
-  - job: setup
-    displayName: syntax validation
-    pool:
-      vmImage: ubuntu-latest
-    steps:
-      - checkout: none
 
-      # Use Python >=3.7 for syntax validation
-      - task: UsePythonVersion@0
-        displayName: Set up python
-        inputs:
-          versionSpec: 3.7
+- job: setup
+  displayName: generate unique cache ID
+  pool:
+    vmImage: ubuntu-latest
+  steps:
+    - checkout: none
+    - bash: |
+        echo "##vso[task.setvariable variable=CACHE_ID;isOutput=true]$(date)"
+      displayName: Set up build constants
+      name: constants
 
-      # Run syntax validation on a shallow clone
-      - bash: |
-          mkdir repository
-          cd repository
-          echo Checking out $(Build.SourceBranch) from $(Build.Repository.Uri)
-          git init
-          git remote add origin $(Build.Repository.Uri)
-          git fetch --depth 1 --no-recurse-submodules origin $(Build.SourceBranch)
-          git checkout FETCH_HEAD
-          python .azure-pipelines/syntax-validation.py
-        displayName: Syntax validation
+- job: cache_file
+  dependsOn:
+    - setup
+  displayName: Populate cache
+  pool:
+    vmImage: macOS-latest
+  variables:
+    CACHE_ID: $[ dependencies.setup.outputs['constants.CACHE_ID'] ]
+  steps:
+  - template: .azure-pipelines/cache-file.yml
 
-      # Set up date constants for caching in further build jobs
-      - bash: |
-          echo "##vso[task.setvariable variable=CURRENT_WEEK;isOutput=true]$(date +W%W)"
-          echo "##vso[task.setvariable variable=TODAY_ISO;isOutput=true]$(date +%Y%m%d)"
-        displayName: Set up build constants
-        name: constants
-
-  - template: .azure-pipelines/azure-pipelines-mac.yml
+- job: restore_file
+  dependsOn:
+    - setup
+    - cache_file
+  displayName: Read back from cache
+  pool:
+    vmImage: macOS-latest
+  variables:
+    CACHE_ID: $[ dependencies.setup.outputs['constants.CACHE_ID'] ]
+  steps:
+  - template: .azure-pipelines/restore-file.yml

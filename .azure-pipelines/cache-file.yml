@@ -1,0 +1,26 @@
+steps:
+
+- checkout: none
+
+- task: Cache@2
+  inputs:
+    key: '"debug-cache" | "$(CACHE_ID)"'
+    path: $(Pipeline.Workspace)/cache
+  displayName: Restore cache
+
+- bash: |
+    rm -rf cache
+    mkdir cache
+    cd cache
+    wget -nv "https://artprodcus3.artifacts.visualstudio.com/Af1c1ac7c-51d7-44e5-b6d0-7ffd389fb217/8f9a0b14-1c65-4a82-9c06-1ec7513061ae/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2F6dXJlLWRpYWxzL3Byb2plY3RJZC84ZjlhMGIxNC0xYzY1LTRhODItOWMwNi0xZWM3NTEzMDYxYWUvYnVpbGRJZC8xNTc2L2FydGlmYWN0TmFtZS9CdWlsZExpYnJhcmllcw2/content?format=file&subPath=%2Fscitbx_array_family_flex_ext.so" -O scitbx_array_family_flex_ext.so
+    echo
+    echo Directory content:
+    ls -la
+    echo
+    echo Hash information:
+    shasum -a 256 scitbx_array_family_flex_ext.so
+  displayName: Download file
+  workingDirectory: $(Pipeline.Workspace)
+
+- publish: $(Pipeline.Workspace)/cache
+  artifact: Publish file
