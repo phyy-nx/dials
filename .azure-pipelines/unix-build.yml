@@ -19,8 +19,6 @@ steps:
 - task: Cache@2
   inputs:
     key: 'debug-repositories'
-    restoreKeys: |
-      "repositories" | "$(CACHE_VERSION)-$(CURRENT_WEEK)" | installer/bootstrap.py
     path: $(Pipeline.Workspace)/modules
     cacheHitVar: REPOSITORIES_CACHED
   displayName: Restore repository cache
@@ -43,8 +41,6 @@ steps:
 - task: Cache@2
   inputs:
     key: 'debug-environment'
-    restoreKeys: |
-      "base" | "$(CACHE_VERSION)-$(CURRENT_WEEK)" | "$(Agent.OS)-$(Agent.Version)-$(Pipeline.Workspace)" | "$(PYTHON_VERSION)" | ${{ parameters.conda_environment }}
     path: $(Pipeline.Workspace)/conda_base
     cacheHitVar: BASE_CACHED
   displayName: Restore environment cache
@@ -92,6 +88,7 @@ steps:
     cp -v build/activate dials  # restore copy from the cache
     . dials
     cd build
+    rm -rf lib/scitbx_array_family_flex_ext.so
     make reconf
   displayName: DIALS build (incremental)
   workingDirectory: $(Pipeline.Workspace)
