@@ -130,6 +130,8 @@ steps:
     cd lib
     ls -la
     ls -1 | xargs file
+    ls -la scitbx_array_family_flex_ext.so || echo ls failed
+    shasum -a 256 scitbx_array_family_flex_ext.so || echo shasum failed
   displayName: debugging 1
   workingDirectory: $(Pipeline.Workspace)
 
@@ -151,6 +153,8 @@ steps:
     cd lib
     ls -la
     ls -1 | xargs file
+    ls -la scitbx_array_family_flex_ext.so || echo ls failed
+    shasum -a 256 scitbx_array_family_flex_ext.so || echo shasum failed
   displayName: debugging 2
   workingDirectory: $(Pipeline.Workspace)
 
@@ -252,3 +256,14 @@ steps:
   displayName: Preparing cache
   workingDirectory: $(Pipeline.Workspace)/modules
   condition: ne(variables.REPOSITORIES_CACHED, 'true')
+
+- bash: |
+    cd build
+    ls -la
+    cd lib
+    ls -la
+    ls -1 | xargs file
+    ls -la scitbx_array_family_flex_ext.so || echo ls failed
+    shasum -a 256 scitbx_array_family_flex_ext.so || echo shasum failed
+  displayName: debugging 3
+  workingDirectory: $(Pipeline.Workspace)
